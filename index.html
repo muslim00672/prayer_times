@@ -1,0 +1,88 @@
+<!--2025-03-15-->
+<!DOCTYPE html>
+<html lang='ar' dir='rtl' data-bs-theme='dark'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>مواقيت الصلاة</title>
+    <script src='script.js'></script>
+    <link rel='stylesheet' href='style.css'>
+</head>
+<body>
+<h1>{إِنَّ الصَّلَوٰةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا} [النساء: 103].</h1>
+<div id='container'>
+    <label class='form-label'>لتفعيل الوضع المظلم/المنير:</label>
+    <button id='toggle' class='btn btn-light'>☀️</button><br>
+    <label class='form-label'>دائرة العرض:</label>
+    <input class='form-control' type='number' id='lat'>
+    <label class='form-label'>خط الطول:</label>
+    <input class='form-control' type='number' id='long'>
+    <label class='form-label'>التاريخ:</label>
+    <input class='form-control' type='date' id='utc'>
+    <table id='table'></table>
+    <p class='alert alert-danger' id='alert'>لعرض مواقيت الصلاة تلقائيًا: يُرجىٰ تفعيل خاصية تحديد الموقع ثم إعادة تحميل الصفحة.</p>
+    <div class='alert alert-primary'>
+        <p>منعًا للالتباس: قد وضعت في الاعتبار الخلاف في زاوية انخفاض الشمس التي يؤذَّن عندها للفجر والعشاء بين 18° و15°.</p>
+        <p>فالفجران والعشاءان الموضحان هما على الزاويتين المذكورتين، والرقم المجاور إشارة لها.</p>
+    </div>
+</div>
+<script>
+const utcEl = document.getElementById('utc');
+const latEl = document.getElementById('lat');
+const longEl = document.getElementById('long');
+
+function get_prayer_times() {
+    const utc = new Date(utcEl.value);
+    const lat = parseFloat(latEl.value);
+    const long = parseFloat(longEl.value);
+    return format_prayer_times(lat, long, utc);
+}
+
+function set_prayer_times() {
+    const names = ['الفجر 18', 'الفجر 15', 'الشروق', 'الظهر', 'العصر', 'المغرب', 'العشاء 15', 'العشاء 18'];
+    const times = get_prayer_times();
+    const tableEl = document.getElementById('table');
+    table.innerHTML = '';
+    names.forEach(function (name, i) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${name}</td><td>&nbsp:&nbsp</td><td>${times[i]}</td>`;
+        tableEl.appendChild(row);
+    });
+}
+
+const utc = new Date();
+utcEl.value = new Date(utc.getTime() - utc.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+navigator.geolocation.getCurrentPosition(
+    function (position) {
+        latEl.value = position.coords.latitude;
+        longEl.value = position.coords.longitude;
+        set_prayer_times();
+    }, function (error) {
+        const alertEl = document.getElementById('alert');
+        alertEl.style.display = 'block';
+        alert(alertEl.textContent);
+    }
+);
+
+utcEl.addEventListener('change', set_prayer_times);
+latEl.addEventListener('input', set_prayer_times);
+longEl.addEventListener('input', set_prayer_times);
+
+const toggle = document.getElementById('toggle');
+toggle.addEventListener('click', function () {
+    const docEl = document.documentElement;
+    if (docEl.getAttribute('data-bs-theme') === 'dark') {
+        docEl.setAttribute('data-bs-theme', 'light');
+        toggle.textContent = '🌕';
+        toggle.classList.remove('btn-light');
+        toggle.classList.add('btn-dark');
+    } else {
+        docEl.setAttribute('data-bs-theme', 'dark');
+        toggle.textContent = '☀️';
+        toggle.classList.remove('btn-dark');
+        toggle.classList.add('btn-light');
+    }
+});
+</script>
+</body>
+</html>
