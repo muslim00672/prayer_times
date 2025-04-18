@@ -1,0 +1,149 @@
+<!--2025-03-15-->
+<!DOCTYPE html>
+<html lang='ar' dir='rtl' data-bs-theme='dark'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>مواقيت الصلاة</title>
+    <script src='script.js'></script>
+    <link rel='stylesheet' href='style.css'>
+</head>
+<body>
+<h1>{إِنَّ الصَّلَوٰةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا} [النساء: 103].</h1>
+<div id='container'>
+    <label class='form-label'>لتفعيل الوضع المظلم/المنير:</label>
+    <button id='toggle' class='btn btn-light'>☀️</button><br>
+    <label class='form-label'>دائرة العرض:</label>
+    <input class='form-control' type='number' id='lat'>
+    <label class='form-label'>خط الطول:</label>
+    <input class='form-control' type='number' id='long'>
+    <label class='form-label'>الارتفاع عن الأفق:</label>
+    <input class='form-control' type='number' id='elev' value='0'>
+    <p class='alert alert-primary'>لم يوضع في الاعتبار طول القامة أو ارتفاع الراصد عن الأفق.</p>
+    <label class='form-label'>التاريخ:</label>
+    <input class='form-control' type='date' id='stamp'><br>
+    <div class='form-control' id='timer'></div>
+    <table id='table'></table>
+    <p class='alert alert-danger' id='alert'>لعرض مواقيت الصلاة تلقائيًا: يُرجىٰ تفعيل خاصية تحديد الموقع ثم إعادة تحميل الصفحة.</p>
+    <div class='alert alert-primary'>
+        <p>وضعت في الاعتبار الخلاف في زاوية انخفاض الشمس التي يؤذَّن عندها للفجر والعشاء بين 18° و15°.</p>
+        <p>فالفجران والعشاءان الموضحان هما على الزاويتين المذكورتين، والرقم المجاور إشارة لها.</p>
+    </div>
+</div>
+<script>
+const stampEl = document.getElementById('stamp');
+const latEl = document.getElementById('lat');
+const longEl = document.getElementById('long');
+const elevEl = document.getElementById('elev');
+
+const stamp = new Date();
+stampEl.value = new Date(stamp.getTime() - stamp.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+
+navigator.geolocation.getCurrentPosition(
+    function (position) {
+        latEl.value = position.coords.latitude;
+        longEl.value = position.coords.longitude;
+        update();
+    }, function (error) {
+        const alertEl = document.getElementById('alert');
+        alertEl.style.display = 'block';
+        alert(alertEl.textContent);
+    }
+);
+
+function update() {
+    const stamp = new Date(stampEl.value);
+    const lat = parseFloat(latEl.value);
+    const long = parseFloat(longEl.value);
+    const elev = parseFloat(elevEl.value);
+    if (isNaN(long)) {
+        return;
+    }
+    let times = prayer_times(lat, long, stamp, elev);
+
+    const names = ['الفجر 18', 'الفجر 15', 'الشروق', 'الظهر', 'العصر', 'المغرب', 'العشاء 15', 'العشاء 18', 'منتصف الليل'];
+
+    function appendRow(timeStr, i) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${names[i]}</td><td>&nbsp:&nbsp</td><td>${timeStr}</td>`;
+        tableEl.appendChild(row);
+    }
+
+    const tableEl = document.getElementById('table');
+    tableEl.innerHTML = '';
+    times.forEach(appendRow);
+
+    function parseTime(timeStr) {
+        const [time, period] = timeStr.split(' ');
+        let [hour, minute, second] = time.split(':').map(Number);
+        if (period === 'م' && hour !== 12) {
+            hour += 12;
+        } else if (period === 'ص' && hour === 12) {
+            hour = 0;
+        }
+        return new Date().setHours(hour, minute, second, 0);
+    }
+
+    const now = new Date();
+    let next = null;
+    let currentStamp = parseTime(times[0]);
+    let x = 0;
+    let i = 0;
+    for (const timeStr of times) {
+        if (timeStr === 'Invalid Date') {
+            continue;
+        }
+        if (currentStamp > parseTime(timeStr)) {
+            x = 1;
+        }
+        currentStamp = parseTime(timeStr) + 86400000 * x;
+        if (currentStamp > now) {
+            next = currentStamp;
+            break;
+        }
+        i++;
+    }
+    if (next === null) {
+        times = prayer_times(lat, long, new Date(stamp.getTime() + 86400000), elev);
+        i = 0;
+        for (const timeStr of times) {
+            if (timeStr !== 'Invalid Date') {
+                next = timeStr;
+                break;
+            }
+            i++;
+        }
+        appendRow(next, i);
+        next = parseTime(next) + 86400000;
+    }
+
+    const diff = (next - now) / 1000;
+    let hours = diff / 3600;
+    let minutes = hours % 1 * 60;
+    let seconds = minutes % 1 * 60;
+    [hours, minutes, seconds] = [hours, minutes, seconds].map(t => parseInt(t));
+    const timerEl = document.getElementById('timer');
+    timerEl.textContent = `باقٍ ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} على ${names[i]}.`;
+    timerEl.style.display = 'block';
+}
+
+const toggleEl = document.getElementById('toggle');
+toggleEl.addEventListener('click', function () {
+    const docEl = document.documentElement;
+    if (docEl.getAttribute('data-bs-theme') === 'dark') {
+        docEl.setAttribute('data-bs-theme', 'light');
+        toggleEl.textContent = '🌕';
+        toggleEl.classList.remove('btn-light');
+        toggleEl.classList.add('btn-dark');
+    } else {
+        docEl.setAttribute('data-bs-theme', 'dark');
+        toggleEl.textContent = '☀️';
+        toggleEl.classList.remove('btn-dark');
+        toggleEl.classList.add('btn-light');
+    }
+});
+
+setInterval(update, 50);
+</script>
+</body>
+</html>
