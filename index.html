@@ -1,0 +1,47 @@
+<!--2025-03-15-->
+<!DOCTYPE html>
+<html lang='ar' dir='rtl' data-bs-theme='dark'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>مواقيت الصلاة</title>
+<script src='script.js'></script>
+<link rel='stylesheet' href='style.css'>
+</head>
+
+<body>
+<h1>{إِنَّ الصَّلَوٰةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا} [النساء: 103].</h1>
+<div id='container'>
+    <label class='form-label'>لتفعيل الوضع المظلم/المنير:</label>
+    <button class='btn' id='toggle'></button><br>
+
+    <label class='form-label'>دائرة العرض:</label>
+    <input class='form-control' type='number' id='lat'>
+
+    <label class='form-label'>خط الطول:</label>
+    <input class='form-control' type='number' id='long'>
+
+    <label class='form-label'>الارتفاع عن الأفق:</label>
+    <input class='form-control' type='number' id='elev'>
+    <p class='alert alert-primary'>لم يوضع في الاعتبار طول الراصد أو ارتفاعه.</p>
+
+    <label class='form-label'>التاريخ:</label>
+    <input class='form-control' type='date' id='stamp'><br>
+
+    <p class='form-control' id='timer'></p>
+
+    <table id='table'></table>
+
+    <div class='alert alert-primary' id='info'>
+        <p>وضعت في الاعتبار الخلاف في زاوية انخفاض الشمس لأذان الفجر والعشاء بين 18° و15°.</p>
+        <p>فالفجران والعشاءان الموضحان هما على الزاويتين المذكورتين، والرقم المجاور إشارة لها.</p>
+    </div>
+
+    <p class='alert alert-danger' id='alert'>لعرض مواقيت الصلاة تلقائيًا: يُرجىٰ تفعيل خاصية تحديد الموقع ثم إعادة تحميل الصفحة.</p>
+
+    <p><a href='https://github.com/muslim00672/prayer_times'>الكود المرجعي</a></p>
+</div>
+
+<script src='app.js'></script>
+</body>
+</html>
