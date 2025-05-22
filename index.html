@@ -1,0 +1,36 @@
+<!--2025-03-15-->
+<!DOCTYPE html>
+<html lang='ar' dir='rtl' data-bs-theme='dark'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>مواقيت الصلاة</title>
+<link rel='stylesheet' href='style.css'>
+</head>
+
+<body>
+<h1>{إِنَّ الصَّلَوٰةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا} [النساء: 103].</h1>
+<div id='container'>
+    <label class='form-label'>الموقع</label>
+    <p class='form-control' id='loc'></p>
+
+    <label class='form-label'>التاريخ</label>
+    <p class='form-control' id='stamp'></p>
+
+    <p class='form-control' id='timer'></p>
+
+    <table id='table'></table>
+
+    <div class='alert alert-primary' id='info'>
+        <p>وضعت في الاعتبار الخلاف في زاوية انخفاض الشمس لأذان الفجر والعشاء بين 18° و15°.</p>
+        <p>فالفجران والعشاءان الموضحان هما على الزاويتين المذكورتين، والرقم المجاور إشارة لها.</p>
+    </div>
+
+    <p class='alert alert-danger' id='alert'>لعرض مواقيت الصلاة تلقائيًا: يُرجىٰ تفعيل خاصية تحديد الموقع ثم إعادة تحميل الصفحة.</p>
+</div>
+
+<script src='tables_math.js'></script>
+<script src='prayerCalc.js'></script>
+<script src='prayerView.js'></script>
+</body>
+</html>
