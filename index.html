@@ -1,0 +1,60 @@
+<!--2025-03-15-->
+<!DOCTYPE html>
+<html lang='ar' dir='rtl'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>مواقيت الصلاة</title>
+<link href='style.css' rel='stylesheet'>
+</head>
+
+<body>
+<button class='btn' data-bs-toggle='offcanvas' data-bs-target='#offcanvas'>☰</button>
+<div class='offcanvas offcanvas-start' id='offcanvas'>
+    <div class='offcanvas-body'>
+        <button class='btn-close' data-bs-dismiss='offcanvas'></button>
+
+        <label class='form-label'>لتفعيل الوضع المظلم/المنير:</label>
+        <button class='btn' id='toggle'></button>
+
+        <label class='form-label'>دائرة العرض:</label>
+        <input class='form-control' type='number' id='lat'>
+
+        <label class='form-label'>خط الطول:</label>
+        <input class='form-control' type='number' id='long'>
+
+        <label class='form-label'>الارتفاع عن الأفق:</label>
+        <button class='btn' data-bs-toggle='tooltip' data-bs-title='مجموع طول الراصد وارتفاعه.'>i</button>
+        <input class='form-control' type='number' id='elev'>
+
+        <label class='form-label'>التاريخ:</label>
+        <input class='form-control' type='date' id='stamp'>
+
+        <p><a href='https://fiqhcouncil.org/fifteen-or-eighteen-degrees-calculating-prayer-fasting-times-in-islam/'>مقال قيّم حول تحديد زاوية الفجر والعشاء</a></p>
+
+        <p><a href='https://github.com/muslim00672/prayer_times'>الكود المرجعي</a></p>
+    </div>
+</div>
+
+<h1>{إِنَّ الصَّلَوٰةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَٰبًا مَّوْقُوتًا} [النساء: 103].</h1>
+
+<div id='container'>
+    <p class='form-control' id='timer'></p>
+
+    <table id='table'></table>
+
+    <div class='alert alert-primary' id='info'>
+        <p>وضعت في الاعتبار الخلاف في زاوية انخفاض الشمس لأذان الفجر والعشاء بين 18° و15°.</p>
+        <p>فالفجران والعشاءان الموضحان هما على الزاويتين المذكورتين، والرقم المجاور إشارة لها.</p>
+    </div>
+
+    <p class='alert alert-danger' id='alert'>لعرض مواقيت الصلاة تلقائيًا: يُرجىٰ تفعيل خاصية تحديد الموقع ثم إعادة تحميل الصفحة.</p>
+</div>
+
+<script src='bootstrapScript.js'></script>
+<script src='themeToggle.js'></script>
+<script src='tables_math.js'></script>
+<script src='prayerCalc.js'></script>
+<script src='prayerView.js'></script>
+</body>
+</html>
